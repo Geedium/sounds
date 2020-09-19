@@ -31,10 +31,10 @@ class Wave
 {
 private:
     wav_hdr header;
-    ALCsizei samples;
+    ALCsizei duration;
     fstream stream;
 public:
-    Wave(const std::string filename) : samples(0)
+    Wave(const std::string filename) : duration(0)
     {
         stream.open(filename, ios::in | ios::out | ios::trunc | ios::binary);
 
@@ -81,7 +81,7 @@ public:
     }
     void Out()
     {
-        header.Subchunk2Size = samples * header.NumOfChan * header.bitsPerSample / 8;
+        header.Subchunk2Size = duration * header.NumOfChan * header.bitsPerSample / 8;
         header.ChunkSize = 36 + header.Subchunk2Size;
 
         stream.seekp(0, ios::beg);
@@ -90,9 +90,9 @@ public:
         stream.close();
     }
 public:
-    void Add(ALint* sample)
+    void Add(ALint samples)
     {
-        this->samples = (ALsizei)sample;
+        duration = samples / header.SamplesPerSec;
     }
 };
 
